@@ -21,10 +21,9 @@ This software assumes the following enrollment process:
 2. The user creates an account by entering their email address.
 3. This email address is validated and an account is created.
 4. (optional) The user logs in and is presented with an enrollment exam. This may contain multiple modules; once a module is passed it is recorded (i.e. progress is not lost if the user logs out).
-5. Once the exam is passed, the user is presented with the study's full consent document.
-6. The user electronically signs that document by typing his/her name.
-7. (optional) Simple information collection. (e.g. addresses)
-8. The user is done and gets emailed a copy of the consent form. The study takes it from here.
+5. The user is presented with the consent form and electronically signs it by typing his/her name.
+6. (optional) Simple information collection. (e.g. addresses)
+7. The user is done and gets emailed a copy of the consent form. The study takes it from here.
 
 Installation
 ------------
