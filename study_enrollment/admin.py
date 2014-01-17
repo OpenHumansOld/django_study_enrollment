@@ -1,5 +1,5 @@
 from django.contrib import admin
-from study_enrollment.models import RequirementList, Requirement
+from study_enrollment.models import RequirementList, Requirement, ActiveEnrollmentSet
 
 class RequirementInline(admin.StackedInline):
     model = Requirement
@@ -12,3 +12,5 @@ class RequirementListAdmin(admin.ModelAdmin):
     inlines = [RequirementInline]
 
 admin.site.register(RequirementList, RequirementListAdmin)
+
+admin.site.register(ActiveEnrollmentSet)

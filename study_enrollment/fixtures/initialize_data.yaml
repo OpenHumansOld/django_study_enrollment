@@ -1,0 +1,35 @@
+# Set up groups.
+# study_admin group can edit enrollment sets and set the active enrollment set.
+- fields:
+    name: study_admin
+    permissions: [26, 22, 23, 24, 19, 20, 21]
+  model: auth.group
+  pk: 1
+# user_admin group can add users and edit which groups they belong to. 
+- fields:
+    name: user_admin
+    permissions: [10, 11, 12]
+  model: auth.group
+  pk: 2
+
+# Study admin: An account used to set up an enrollment process.
+# No other accounts should be necessary to run a site with django-study-enrollment.
+- fields:
+    username: study_admin
+    email: ''
+    groups: [1]
+    user_permissions: []
+    is_active: true
+    is_staff: true
+    is_superuser: false
+    first_name: Study
+    last_name: Admin
+    # Password is "study_admin".
+    password: pbkdf2_sha256$12000$hEly8oDuDZHj$4a7Rl+jmxGBXHq3rTpQzJZGR4ccM3WRrtvWVHEOciOg=
+  model: auth.user
+
+# The active enrollment set. There should only be one, and this is it.
+# Study admin has permission to change the object, but not create or delete it.
+- fields: {requirements: null}
+  model: study_enrollment.activeenrollmentset
+  pk: 1
