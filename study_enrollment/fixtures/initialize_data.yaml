@@ -30,6 +30,6 @@
 
 # The active enrollment set. There should only be one, and this is it.
 # Study admin has permission to change the object, but not create or delete it.
-- fields: {requirements: null}
+- fields: {req_list: null, use_req_list: true}
   model: study_enrollment.activeenrollmentset
   pk: 1

@@ -19,6 +19,7 @@ class Requirement(models.Model):
         return self.question
 
 class ActiveEnrollmentSet(models.Model):
-    requirements = models.OneToOneField(RequirementList,
-                                        null=True,
-                                        blank=True)
+    req_list = models.OneToOneField(RequirementList,
+                                    null=True,
+                                    blank=True)
+    use_req_list = models.BooleanField(default=True)
