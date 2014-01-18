@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User, check_password
 from study_enrollment.models import ActiveEnrollmentSet, Requirement
 
@@ -18,7 +18,6 @@ def get_requirements(enrollment_set):
 
 
 def index(request):
-    active_enrollment_set = ActiveEnrollmentSet.objects.all()
     try:
         default_account = User.objects.get(username='study_admin')
     except User.DoesNotExist:
@@ -27,18 +26,26 @@ def index(request):
                             "probably because the initialize_data.yaml " +
                             "fixture hasn't been loaded.")
     if not admin_pwd_changed(default_account):
-        return HttpResponse("Welcome to django_study_enrollment! This system has to be set up. Please log in to /admin as study_admin (password: \"study_admin\") and change the password.")
+        return render(request, 'study_enrollment/system_needs_set_up.html')
+    active_enrollment_set = ActiveEnrollmentSet.objects.all()
     if len(active_enrollment_set) != 1:
-        return HttpResponse("Problem with database! Only one ActiveEnrollmentSet should exist.")
-    enrollment_set = active_enrollment_set[0]
+        return HttpResponse("Problem with database! One and only one ActiveEnrollmentSet should exist.")
+    return render(request, 'study_enrollment/index.html')
 
+def requirements(request):
+    active_enrollment_set = ActiveEnrollmentSet.objects.all()
+    if len(active_enrollment_set) != 1:
+        return HttpResponse("Problem with database! One and only one ActiveEnrollmentSet should exist.")
+    enrollment_set = active_enrollment_set[0]
     if enrollment_set.use_req_list:
         requirements = get_requirements(enrollment_set)
         if not requirements:
-            return HttpResponse("Study requirements haven't been designated for the enrollment system!")
+            return render(request, 'study_enrollment/requirements_need_set_up.html')
         else:
             output = ', '.join([str(x) for x in requirements])
             return HttpResponse(output)
     else:
-        return HttpResponse("Default page if not req list is being used.")
+        return HttpResponseRedirect('/start')
 
+def start(request):
+    return HttpResponse("Page for entering email to start enrollment process.")

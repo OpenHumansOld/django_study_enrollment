@@ -1,0 +1,30 @@
+{% extends "study_enrollment/base.html" %}
+
+{% block css-overrides %}
+<style type="text/css">
+  table, td, tr {
+    border: 1px solid #ccc;
+  }
+</style>
+{% endblock css-overrides %}
+
+{% block main %}
+
+<p>Thank you for using our django_study_enrollment project!</p>
+
+<p>It looks like this tool hasn't been set up yet, because the study_admin account password hasn't been changed from its default. To start running your study, you should:
+
+<ul>
+  <li>Log in as the "study_admin".
+    <table>
+      <tr><td>Username</td><td style="font-family:monospace">study_admin</td></tr>
+      <tr><td>Default password</td><td style="font-family:monospace">study_admin</td></tr>
+    </table>
+  </li>
+  <li>Reset the default password.</li>
+  <li>Configure the enrollment steps.</li>
+</ul>
+
+Click here to log in to the <a href="/admin">admin interface</a>.
+
+{% endblock main %}

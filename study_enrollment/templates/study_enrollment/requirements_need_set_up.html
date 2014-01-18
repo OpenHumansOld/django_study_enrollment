@@ -1,0 +1,27 @@
+{% extends "study_enrollment/base.html" %}
+
+{% block css-overrides %}
+<style type="text/css">
+  table, td, tr {
+    border: 1px solid #ccc;
+  }
+</style>
+{% endblock css-overrides %}
+
+{% block main %}
+
+<p>Thank you for using our django_study_enrollment project!</p>
+
+<p>It looks like you don't have any study requirements set. You must do either of the following:</p>
+
+<ul>
+  <li>Select a RequirementList for the ActiveEnrollmentSet and make sure this RequirementList has at least one Requirement in it.</li>
+</ul>
+<p><strong>or</strong></p>
+<ul>
+  <li>If you don't want you enrollment to start with a study requirements page, turn off the option "use_req_list" in the ActiveEnrollmentSet.</li>
+</ul>
+
+Click here to log in to the <a href="/admin">admin interface</a>.
+
+{% endblock main %}
