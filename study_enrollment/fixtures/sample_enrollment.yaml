@@ -1,0 +1,33 @@
+- fields: {version: Ice Cream Requirements}
+  model: study_enrollment.requirementlist
+  pk: 1
+- fields:
+    explanation: ''
+    question: Do you like dessert?
+    req_list: [1]
+  model: study_enrollment.requirement
+  pk: 1
+- fields:
+    explanation: ''
+    question: Do you have lactose intolerance?
+    req_list: [1]
+  model: study_enrollment.requirement
+  pk: 2
+- fields: {answer: 'Yes', is_eligible: true, requirement: 1}
+  model: study_enrollment.requirementchoice
+  pk: 1
+- fields: {answer: Sometimes, is_eligible: true, requirement: 1}
+  model: study_enrollment.requirementchoice
+  pk: 2
+- fields: {answer: Never, is_eligible: false, requirement: 1}
+  model: study_enrollment.requirementchoice
+  pk: 3
+- fields: {answer: 'Yes', is_eligible: false, requirement: 2}
+  model: study_enrollment.requirementchoice
+  pk: 4
+- fields: {answer: 'No', is_eligible: true, requirement: 2}
+  model: study_enrollment.requirementchoice
+  pk: 5
+- fields: {req_list: 1, use_req_list: true}
+  model: study_enrollment.activeenrollmentset
+  pk: 1

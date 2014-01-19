@@ -1,0 +1,23 @@
+{% extends "study_enrollment/base.html" %}
+
+{% block main %}
+
+<h1>Eligibility Requirements</h1>
+
+<p>
+  Unfortunately, not everyone can enroll in this study. We need to ask you
+  some questions to see if you meet our eligibility requirements.
+</p>
+
+<hr>
+
+<form>
+{% for requirement in requirements %}
+<p>{{ requirement }}</p>
+{% for item in requirement.REQ_CHOICES %}
+{{item}}
+{% endfor %}
+{% endfor %}
+</form>
+
+{% endblock main %}

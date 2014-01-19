@@ -2,7 +2,17 @@
 # study_admin group can edit enrollment sets and set the active enrollment set.
 - fields:
     name: study_admin
-    permissions: [26, 22, 23, 24, 19, 20, 21]
+    permissions:
+      - ["change_activeenrollmentset", "study_enrollment", "activeenrollmentset"]
+      - ["add_requirementlist", "study_enrollment", "requirementlist"]
+      - ["change_requirementlist", "study_enrollment", "requirementlist"]
+      - ["delete_requirementlist", "study_enrollment", "requirementlist"]
+      - ["add_requirement", "study_enrollment", "requirement"]
+      - ["change_requirement", "study_enrollment", "requirement"]
+      - ["delete_requirement", "study_enrollment", "requirement"]
+      - ["add_requirementchoice", "study_enrollment", "requirementchoice"]
+      - ["change_requirementchoice", "study_enrollment", "requirementchoice"]
+      - ["delete_requirementchoice", "study_enrollment", "requirementchoice"]
   model: auth.group
   pk: 1
 # user_admin group can add users and edit which groups they belong to. 

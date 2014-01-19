@@ -42,10 +42,11 @@ def requirements(request):
         if not requirements:
             return render(request, 'study_enrollment/requirements_need_set_up.html')
         else:
-            output = ', '.join([str(x) for x in requirements])
-            return HttpResponse(output)
+            return render(request, 'study_enrollment/requirements.html', {'requirements':requirements})
     else:
         return HttpResponseRedirect('/start')
 
 def start(request):
+    # TODO: Make sure user can't just jump to this without going through
+    # the requirements page (if used).
     return HttpResponse("Page for entering email to start enrollment process.")
