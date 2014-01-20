@@ -47,7 +47,7 @@ def requirements(request):
             req_choices = req.requirementchoice_set.all()
             choice = req.requirementchoice_set.get(answer=request.POST[req.question])
             if not choice.is_eligible:
-                failed_questions.append(req)
+                failed_questions.append({'requirement': req, 'choice': choice})
         if failed_questions:
             return render(request, 'study_enrollment/not_eligible.html', { 'reqs_failed': failed_questions })
         else:

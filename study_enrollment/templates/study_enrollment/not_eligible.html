@@ -10,9 +10,10 @@
 
 <hr>
 
-{% for req in reqs_failed %}
-<h3>Question: {{ req.question }}</h3>
-<p>{{ req.explanation }}</p>
+{% for response in reqs_failed %}
+<h3>Question: {{ response.requirement.question }}</h3>
+<h4>Your answer: {{ response.choice.answer }}</h4>
+<p>Explanation: {{ response.requirement.explanation }}</p>
 {% endfor %}
 
 {% endblock main %}
