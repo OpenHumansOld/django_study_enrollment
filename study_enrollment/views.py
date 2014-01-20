@@ -39,12 +39,30 @@ def requirements(request):
     enrollment_set = active_enrollment_set[0]
     if enrollment_set.use_req_list:
         requirements = get_requirements(enrollment_set)
+    else:
+        return HttpResponseRedirect('/start')
+    if request.method == 'POST':
+        failed_questions = []
+        for req in requirements:
+            req_choices = req.requirementchoice_set.all()
+            choice = req.requirementchoice_set.get(answer=request.POST[req.question])
+            if not choice.is_eligible:
+                failed_questions.append(req)
+        if failed_questions:
+            return render(request, 'study_enrollment/not_eligible.html', { 'reqs_failed': failed_questions })
+        else:
+            return HttpResponse("Page for entering email to start enrollment process.")
+    else:
+        requirements = get_requirements(enrollment_set)
         if not requirements:
             return render(request, 'study_enrollment/requirements_need_set_up.html')
         else:
-            return render(request, 'study_enrollment/requirements.html', {'requirements':requirements})
-    else:
-        return HttpResponseRedirect('/start')
+            requirement_choices = [req.requirementchoice_set.all() for req in requirements]
+            req_items = [ {'requirement': requirements[x],
+                           'req_choices': requirement_choices[x]}
+                          for x in range(len(requirements)) ]
+            return render(request, 'study_enrollment/requirements.html',
+                          { 'req_items': req_items } )
 
 def start(request):
     # TODO: Make sure user can't just jump to this without going through

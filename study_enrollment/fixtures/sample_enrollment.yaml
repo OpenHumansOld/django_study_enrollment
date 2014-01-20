@@ -2,13 +2,13 @@
   model: study_enrollment.requirementlist
   pk: 1
 - fields:
-    explanation: ''
+    explanation: 'Our study involves tasting ice cream, a popular dessert item. Feedback regarding flavors is going to be studied, and so it is important that our participants do not find eating ice cream a generally unpleasant task.'
     question: Do you like dessert?
     req_list: [1]
   model: study_enrollment.requirement
   pk: 1
 - fields:
-    explanation: ''
+    explanation: 'Our study involves tasting ice cream, a dairy-based dessert. Our study protocol tries to minimize risk, and so we cannot enroll individuals with known health issues with eating milk products.'
     question: Do you have lactose intolerance?
     req_list: [1]
   model: study_enrollment.requirement

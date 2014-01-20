@@ -1,0 +1,18 @@
+{% extends "study_enrollment/base.html" %}
+
+{% block main %}
+
+<h1>Not Eligible</h1>
+
+<p>
+  Sorry, based on your answers it looks like you aren't eligible for our study. Explanations are listed below.
+</p>
+
+<hr>
+
+{% for req in reqs_failed %}
+<h3>Question: {{ req.question }}</h3>
+<p>{{ req.explanation }}</p>
+{% endfor %}
+
+{% endblock main %}

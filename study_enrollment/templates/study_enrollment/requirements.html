@@ -11,13 +11,19 @@
 
 <hr>
 
-<form>
-{% for requirement in requirements %}
-<p>{{ requirement }}</p>
-{% for item in requirement.REQ_CHOICES %}
-{{item}}
-{% endfor %}
-{% endfor %}
+<form action="{% url 'requirements' %}" method="post">
+  {% csrf_token %}
+  {% for req_item in req_items %}
+    <p>{{ req_item.requirement.question }}</p>
+    {% for choice in req_item.req_choices %}
+      <input type="radio" name="{{ req_item.requirement.question }}" value="{{ choice.answer }}">
+      {{ choice.answer }}
+      </input>
+    {% endfor %}
+  {% endfor %}
+  <p>
+    <input type="submit" value="Enter answers" />
+  </p>
 </form>
 
 {% endblock main %}
