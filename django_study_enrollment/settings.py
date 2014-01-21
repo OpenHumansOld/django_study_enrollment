@@ -81,3 +81,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Close the session when user closes the browser
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True

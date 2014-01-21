@@ -63,11 +63,14 @@ class RequirementsView(BaseEnrollmentView):
         if failed_questions:
             return render(request, 'study_enrollment/not_eligible.html', { 'reqs_failed': failed_questions })
         else:
-            return HttpResponse("Page for entering email to start enrollment process.")
+            request.session['is_eligible'] = True
+            return HttpResponseRedirect('/start')
 
 
 class StartView(BaseEnrollmentView):
     def get(self, request, *args, **kwargs):
         # TODO: Make sure user can't just jump to this without going through
         # the requirements page (if used).
+        if self.enrollment_set.use_req_list and not request.session.get('is_eligible'):
+            return HttpResponseRedirect('/')
         return HttpResponse("Page for entering email to start enrollment process.")
