@@ -5,13 +5,6 @@ from django.views.generic.base import View
 from study_enrollment.models import ActiveEnrollmentSet, Requirement
 
 
-def get_requirements(enrollment_set):
-    if not enrollment_set.req_list:
-        return []
-    else:
-        return Requirement.objects.filter(req_list=enrollment_set.req_list)
-
-
 class BaseEnrollmentView(View):
     def admin_pwd_changed(self, default_account):
         # If the password matches "study_admin", it hasn't been changed.
@@ -33,6 +26,9 @@ class BaseEnrollmentView(View):
         active_enrollment_set = ActiveEnrollmentSet.objects.all()
         if len(active_enrollment_set) != 1:
             return HttpResponse("Problem with database! One and only one ActiveEnrollmentSet should exist.")
+        self.enrollment_set = active_enrollment_set[0]
+        if self.enrollment_set.use_req_list:
+            self.requirements = Requirement.objects.filter(req_list=self.enrollment_set.req_list)
         # Remainder as in django.views.generic.base
         return super(BaseEnrollmentView, self).dispatch(request, *args, **kwargs)
 
@@ -44,34 +40,22 @@ class IndexView(BaseEnrollmentView):
 
 class RequirementsView(BaseEnrollmentView):
     def get(self, request, *args, **kwargs):
-        active_enrollment_set = ActiveEnrollmentSet.objects.all()
-        enrollment_set = active_enrollment_set[0]
-        if enrollment_set.use_req_list:
-            requirements = get_requirements(enrollment_set)
-        else:
+        if not self.enrollment_set.use_req_list:
             return HttpResponseRedirect('/start')
-        requirements = get_requirements(enrollment_set)
-        if not requirements:
+        if not self.requirements:
             return render(request, 'study_enrollment/requirements_need_set_up.html')
-        else:
-            requirement_choices = [req.requirementchoice_set.all() for req in requirements]
-            req_items = [ {'requirement': requirements[x],
-                           'req_choices': requirement_choices[x]}
-                          for x in range(len(requirements)) ]
-            return render(request, 'study_enrollment/requirements.html',
-                          { 'req_items': req_items } )
+        requirement_choices = [req.requirementchoice_set.all() for req in self.requirements]
+        req_items = [ {'requirement': self.requirements[x],
+                       'req_choices': requirement_choices[x]}
+                      for x in range(len(self.requirements)) ]
+        return render(request, 'study_enrollment/requirements.html',
+                      { 'req_items': req_items } )
 
     def post(self, request, *args, **kwargs):
-        active_enrollment_set = ActiveEnrollmentSet.objects.all()
-        if len(active_enrollment_set) != 1:
-            return HttpResponse("Problem with database! One and only one ActiveEnrollmentSet should exist.")
-        enrollment_set = active_enrollment_set[0]
-        if enrollment_set.use_req_list:
-            requirements = get_requirements(enrollment_set)
-        else:
+        if not self.enrollment_set.use_req_list:
             return HttpResponseRedirect('/start')
         failed_questions = []
-        for req in requirements:
+        for req in self.requirements:
             req_choices = req.requirementchoice_set.all()
             choice = req.requirementchoice_set.get(answer=request.POST[req.question])
             if not choice.is_eligible:
