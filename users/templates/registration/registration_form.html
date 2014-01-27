@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block css-overrides %}
+{{ form.media.css }}
+{% endblock css-overrides %}
+
+{% block main %}
+{{ forms.media.css }}
+<form method="post" action=".">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <input type="submit" value="Create account" />
+</form>
+{% endblock main %}

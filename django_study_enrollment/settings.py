@@ -10,21 +10,19 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import registration_email
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'fv3z$=cgu*^esx-kt^ej7&*i+zb15*-cp1u!rpqujfwv)i&u^*'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 TEMPLATE_DEBUG = True
-
 ALLOWED_HOSTS = []
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Application definition
@@ -36,6 +34,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'registration',
+    'users',
     'study_enrollment',
 )
 
@@ -82,6 +82,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Templates that aren't in apps live here.
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates')
+)
 
 # Close the session when user closes the browser
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Close unactivated accounts after two weeks
+ACCOUNT_ACTIVATION_DAYS = 14
+REGISTRATION_EMAIL_REGISTER_SUCCESS_URL = '/accounts/register/complete/'
+
+AUTHENTICATION_BACKENDS = (
+    'registration_email.auth.EmailBackend',
+)
+LOGIN_REDIRECT_URL = '/'
