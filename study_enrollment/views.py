@@ -1,19 +1,34 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User, check_password
-from django.views.generic.base import View
-from study_enrollment.models import ActiveEnrollmentSet, Requirement
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render
+from django.utils.decorators import method_decorator
+from django.views.generic.base import View, TemplateView
+from study_enrollment.models import ActiveEnrollmentSet, Requirement, UserEnrollment
+from study_enrollment.decorators import is_eligible
 
 
 class BaseEnrollmentView(View):
-    def admin_pwd_changed(self, default_account):
+    def _admin_pwd_changed(self, default_account):
         # If the password matches "study_admin", it hasn't been changed.
         if check_password('study_admin', default_account.password):
             return False
         else:
             return True
 
+    def _transfer_eligibility_info(self, request):
+        if request.session.get('study_enrollment_eligible'):
+            self.user_enrollment.is_eligible = True
+            del request.session['study_enrollment_eligible']
+
     def dispatch(self, request, *args, **kwargs):
+        """
+        Wrapper that checks system set up and loads:
+          -  self.enrollment_set (always)
+          -  self.requirements (if self.enrollment_set.use_req_list is True)
+          -  self.user_enrollment (if user.is_authenticated() is True)
+
+        """
         try:
             default_account = User.objects.get(username='study_admin')
         except User.DoesNotExist:
@@ -21,7 +36,7 @@ class BaseEnrollmentView(View):
                                 "the study_admin account doesn't exist -- " +
                                 "probably because the initialize_data.yaml " +
                                 "fixture hasn't been loaded.")
-        if not self.admin_pwd_changed(default_account):
+        if not self._admin_pwd_changed(default_account):
             return render(request, 'study_enrollment/system_needs_set_up.html')
         active_enrollment_set = ActiveEnrollmentSet.objects.all()
         if len(active_enrollment_set) != 1:
@@ -29,13 +44,29 @@ class BaseEnrollmentView(View):
         self.enrollment_set = active_enrollment_set[0]
         if self.enrollment_set.use_req_list:
             self.requirements = Requirement.objects.filter(req_list=self.enrollment_set.req_list)
+        if request.user.is_authenticated():
+            self.user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
+            self._transfer_eligibility_info(request)
+            self.user_enrollment.save()
+
         # Remainder as in django.views.generic.base
         return super(BaseEnrollmentView, self).dispatch(request, *args, **kwargs)
 
 
 class IndexView(BaseEnrollmentView):
     def get(self, request, *args, **kwargs):
-        return render(request, 'study_enrollment/index.html')
+        reqs_needed = ((request.user.is_authenticated() and self.user_enrollment.is_eligible) or
+                       request.session.get('study_enrollment_eligible'))
+        print reqs_needed
+        not_logged_in = not request.user.is_authenticated()
+        return render(request, 'study_enrollment/index.html', {'reqs_needed': reqs_needed,
+                                                               'not_logged_in': not_logged_in})
+
+
+class EnrollmentTemplateView(BaseEnrollmentView, TemplateView):
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 
 class RequirementsView(BaseEnrollmentView):
@@ -63,14 +94,20 @@ class RequirementsView(BaseEnrollmentView):
         if failed_questions:
             return render(request, 'study_enrollment/not_eligible.html', { 'reqs_failed': failed_questions })
         else:
-            request.session['is_eligible'] = True
-            return HttpResponseRedirect('/start')
+            if request.user.is_authenticated():
+                user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
+                user_enrollment.is_eligible = True
+                user_enrollment.save()
+            else:
+                request.session['study_enrollment_eligible'] = True
+            return HttpResponseRedirect(reverse('requirements_passed'))
 
 
 class StartView(BaseEnrollmentView):
+
+    @method_decorator(is_eligible)
+    def dispatch(self, request, *args, **kwargs):
+        return super(StartView, self).dispatch(request, *args, **kwargs)
+
     def get(self, request, *args, **kwargs):
-        # TODO: Make sure user can't just jump to this without going through
-        # the requirements page (if used).
-        if self.enrollment_set.use_req_list and not request.session.get('is_eligible'):
-            return HttpResponseRedirect('/')
-        return HttpResponse("Page for entering email to start enrollment process.")
+        return HttpResponse("Page for starting enrollment exam.")

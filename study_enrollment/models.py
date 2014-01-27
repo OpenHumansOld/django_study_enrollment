@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class RequirementList(models.Model):
     version = models.CharField(max_length=30)
@@ -30,3 +31,7 @@ class ActiveEnrollmentSet(models.Model):
                                  null=True,
                                  blank=True)
     use_req_list = models.BooleanField(default=True)
+
+class UserEnrollment(models.Model):
+    user = models.ForeignKey(User)
+    is_eligible = models.BooleanField(default=False)

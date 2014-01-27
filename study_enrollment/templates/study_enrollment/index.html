@@ -6,8 +6,14 @@
 
 <p>A description of our study should appear here.</p>
 
-<p>If you think you might want to enroll, please click below!</p>
+{% if reqs_needed %}
+<p>To see if you are eligible for this study, please complete our <a href="{% url 'requirements' %}">study requirements questionnaire</a>.</p>
+{% endif %}
 
-<a href="/requirements">[ Enroll link ]</a>
+{% if not_logged_in %}
+<p>If you have already started an enrollment process, please <a href="{% url 'auth_login' %}">log in</a> to continue.</p>
+{% else %}
+<p><a href="{% url 'start' %}">Continue your enrollment</a>.</p>
+{% endif %}
 
 {% endblock main %}
