@@ -8,6 +8,9 @@ from registration.backends.default.views import ActivationView
 
 from users.forms import RegistrationForm
 
+from study_enrollment.mixins import ReqsMetMixin
+from study_enrollment.models import UserEnrollment
+
 class RegistrationView(BaseRegistrationView):
     """
     A registration view with the following workflow:
@@ -30,3 +33,20 @@ class RegistrationView(BaseRegistrationView):
                                      user=new_user,
                                      request=request)
         return new_user
+
+
+class EnrollmentRegistrationView(ReqsMetMixin, RegistrationView):
+    """
+    A customization of RegistrationView for use with study_enrollment
+
+    In this implementation, study requirements must be met before
+    the user is invited to create an account.
+
+    """
+    def register(self, request, **cleaned_data):
+        new_user = super(EnrollmentRegistrationView, self).register(request, **cleaned_data)
+        # Create a new UserEnrollment and add is_eligible = True
+        user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
+        user_enrollment.is_eligible = True
+        user_enrollment.save()
+        del request.session[IS_ELIGIBLE_FLAG]

@@ -1,14 +1,14 @@
 from django.conf.urls import include, patterns, url
 from django.contrib.auth import views as auth_views
 from registration.backends.default.urls import urlpatterns
-from users.views import RegistrationView
+from users.views import EnrollmentRegistrationView
 from users.forms import RegistrationForm
 
 urlpatterns = patterns('',
 
     # Use our local email-as-username registration form.
     url(r'^register/$',
-        RegistrationView.as_view(form_class=RegistrationForm),
+        EnrollmentRegistrationView.as_view(form_class=RegistrationForm),
         name='registration_register'
         ),
 
