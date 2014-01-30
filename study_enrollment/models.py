@@ -34,7 +34,7 @@ class Requirement(models.Model):
     choices = requirement.requirementchoice_set.all()
 
     """
-    # A requirement question might get re-used in multiple requirement lists.
+    # A question might get re-used in multiple versions of the requirement list
     req_list = models.ManyToManyField(RequirementList)
     question = models.CharField(max_length=200)
     explanation = models.TextField(blank=True)
@@ -61,6 +61,97 @@ class RequirementChoice(models.Model):
     def __unicode__(self):
         return str(self.answer) + ' (Eligible: ' + str(self.is_eligible) + ')'
 
+class ModuleList(models.Model):
+    """
+    A model defining a set of EnrollmentModules
+
+    Fields:
+    version:  (CharField, 30 char max) Short string describing this list
+
+    EnrollmentModules are defined by a ManyToMany relationship.
+    To access them from the object, a filter can be used, e.g.
+    modules = EnrollmentModule.objects.filter(module_list=module_list)
+
+    """
+    pass
+    version = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return self.version
+
+class EnrollmentModule(models.Model):
+    """
+    A module in an enrollment exam/lesson system.
+
+    Fields:
+    title:    (CharField, 120 char max) Title of this module
+    content:  (TextField) Study material for this section.
+              Markdown markup can be used for this field if the site has
+              django.contrib.markup in INSTALLED_APPS and templates use
+              {% load markup %} and {{ content|markdown:"safe" }}
+
+    Questions for the module are defined as ModuleQuestion objects.
+    To access them from this object, you can ask for the set, e.g.
+    questions = enrollmentmodule.modulequestion_set.all()
+
+    """
+    # A module might get re-used in multiple versions of the module list
+    title = models.CharField(max_length=120)
+    content = TextField(blank=True)
+
+    def __unicode__(self):
+        return self.title
+
+class ModuleQuestion(models.Model):
+    """
+    A module question.
+
+    Fields:
+    module_list:   (ManyToMany) ModuleList
+    question:      (CharField, 300 char max) Question about material
+                   (e.g. "What ingredients may be in our ice cream?")
+    question_type: (CharField, 3 char max) choices are "all" or "one"
+                   "all": "select all" presents a checkbox question; the user
+                   must select all correct answers to pass the question.
+                   "one": "select one" presents a radiobox question; the user
+                   must select one correct answer to pass the question.
+
+    Answers are defined as ModuleQuestionChoice objects.
+    To access them from this object, you can ask for the set, e.g.
+    choices = modulequestion.modulequestionchoice_set.all()
+
+    """
+    module_list = models.ManyToManyField(ModuleList)
+    question = models.CharField(max_length=300)
+    question_type_choices = [('one': 'select one'),
+                             ('all': 'select all')]
+    question_type = models.CharField(max_length=3,
+                                     choices=question_type_choices,
+                                     default='one')
+
+    def __unicode__(self):
+        return self.question + ': ' + ', '.join([str(x) for x in self.modulequestionchoice_set.all()])
+
+class ModuleQuestionChoice(models.Model):
+    """
+    A potential answer to a ModuleQuestion.
+
+    Fields:
+    question:    (ForeignKey) ModuleQuestion
+    answer:      (CharField, 200 char max) Answer to question
+    is_correct:  (BooleanField) True if this answer is correct
+
+    """
+    # Only map to one ModuleQuestion, because is_correct depends on the Q/A combo.
+    # e.g. a "Yes" for Q1 could be correct, but "Yes" to Q2 means incorrect.
+    question = models.ForeignKey(ModuleQuestion)
+    answer = models.CharField(max_length=200)
+    is_correct = models.BooleanField()
+
+    def __unicode__(self):
+        return str(self.answer) + ' (Correct: ' + str(self.is_eligible) + ')'
+
+
 class ActiveEnrollmentSet(models.Model):
     """
     The set of requirements, guides, and forms currently used by the system.
@@ -68,15 +159,22 @@ class ActiveEnrollmentSet(models.Model):
     by the initialize_data fixture.
 
     Fields:
-    req_list:      (ForeignKey) A RequirementList
-    use_req_list:  (Boolean) Default is True. Set to False to not use any
-                   requirement questions.
+    req_list:        (ForeignKey) A RequirementList
+    use_req_list:    (Boolean) Default is True. Set to False to not use any
+                     requirement questions.
+    module_list:     (ForeignKey) A ModuleList
+    use_module_list: (Boolean) Default is True. Set to False to not use any
+                     modules.
 
     """
     req_list = models.ForeignKey(RequirementList,
                                  null=True,
                                  blank=True)
     use_req_list = models.BooleanField(default=True)
+    module_list = models.ForeignKey(ModuleList,
+                                    null=True,
+                                    blank=True)
+    use_module_list = models.BooleanField(default=True)
 
 class UserEnrollment(models.Model):
     """
