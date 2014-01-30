@@ -1,18 +1,21 @@
 - fields: {version: Ice Cream Requirements}
   model: study_enrollment.requirementlist
   pk: 1
+
 - fields:
     explanation: 'Our study involves tasting ice cream, a popular dessert item. Feedback regarding flavors is going to be studied, and so it is important that our participants do not find eating ice cream a generally unpleasant task.'
     question: Do you like dessert?
     req_list: [1]
   model: study_enrollment.requirement
   pk: 1
+
 - fields:
     explanation: 'Our study involves tasting ice cream, a dairy-based dessert. Our study protocol tries to minimize risk, and so we cannot enroll individuals with known health issues with eating milk products.'
     question: Do you have lactose intolerance?
     req_list: [1]
   model: study_enrollment.requirement
   pk: 2
+
 - fields: {answer: 'Yes', is_eligible: true, requirement: 1}
   model: study_enrollment.requirementchoice
   pk: 1
@@ -22,12 +25,94 @@
 - fields: {answer: Never, is_eligible: false, requirement: 1}
   model: study_enrollment.requirementchoice
   pk: 3
+
 - fields: {answer: 'Yes', is_eligible: false, requirement: 2}
   model: study_enrollment.requirementchoice
   pk: 4
 - fields: {answer: 'No', is_eligible: true, requirement: 2}
   model: study_enrollment.requirementchoice
   pk: 5
-- fields: {req_list: 1, use_req_list: true}
+
+- fields: {version: Ice cream lessons v1}
+  model: study_enrollment.modulelist
+  pk: 1
+- fields:
+    content: "Ice cream has things in it, including: milk, cream, sugar and eggs.
+      It may also have chocolate, vanilla, or strawberry.\r\n\r\nIce cream has lots
+      of calories.\r\n"
+    module_list: [1]
+    title: Ice cream nutrition
+  model: study_enrollment.enrollmentmodule
+  pk: 1
+- fields:
+    content: "You might think ice cream preferences are innocuous, but they could
+      reveal a lot about you.\r\n\r\nFor example, if you reporting a preference \"jimmies\"
+      as a topping (instead of \"sprinkles\"), you would reveal that you probably
+      grew up in the Boston area.\r\n\r\nOn the other hand, if you state a preference
+      for \"garlic\" ice cream people might suspect you've visited Gilroy, CA. (They
+      might also think you are a bit weird.)\r\n\r\nYour answers will be publicly
+      shared. We will NOT have anyone review this data before it is publicly shared.
+      It is your responsibility to decide what information you are willing to share."
+    module_list: [1]
+    title: Ice cream privacy
+  model: study_enrollment.enrollmentmodule
+  pk: 2
+
+- fields:
+    enrollment_module: [1]
+    question: Ice cream...
+    question_type: all
+  model: study_enrollment.modulequestion
+  pk: 1
+- fields:
+    enrollment_module: [1]
+    question: Ice cream may contain chocolate, strawberry, or vanilla.
+    question_type: one
+  model: study_enrollment.modulequestion
+  pk: 2
+
+- fields:
+    enrollment_module: [2]
+    question: Ice cream preferences may reveal unusual things about you.
+    question_type: one
+  model: study_enrollment.modulequestion
+  pk: 3
+- fields:
+    enrollment_module: [2]
+    question: Data is public, but we will have experts review it first to make sure
+      your privacy is protected.
+    question_type: one
+  model: study_enrollment.modulequestion
+  pk: 4
+
+- fields: {answer: contains dairy, is_correct: true, question: 1}
+  model: study_enrollment.modulequestionchoice
+  pk: 1
+- fields: {answer: has many calories, is_correct: true, question: 1}
+  model: study_enrollment.modulequestionchoice
+  pk: 2
+- fields: {answer: is a healthy food choice, is_correct: false, question: 1}
+  model: study_enrollment.modulequestionchoice
+  pk: 3
+- fields: {answer: 'True', is_correct: true, question: 2}
+  model: study_enrollment.modulequestionchoice
+  pk: 4
+- fields: {answer: 'False', is_correct: false, question: 2}
+  model: study_enrollment.modulequestionchoice
+  pk: 5
+- fields: {answer: 'True', is_correct: true, question: 3}
+  model: study_enrollment.modulequestionchoice
+  pk: 6
+- fields: {answer: 'False', is_correct: false, question: 3}
+  model: study_enrollment.modulequestionchoice
+  pk: 7
+- fields: {answer: 'True', is_correct: false, question: 4}
+  model: study_enrollment.modulequestionchoice
+  pk: 8
+- fields: {answer: 'False', is_correct: true, question: 4}
+  model: study_enrollment.modulequestionchoice
+  pk: 9
+
+- fields: {module_list: 1, req_list: 1, use_module_list: true, use_req_list: true}
   model: study_enrollment.activeenrollmentset
   pk: 1

@@ -10,7 +10,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-import registration_email
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -90,11 +89,7 @@ TEMPLATE_DIRS = (
 # Close the session when user closes the browser
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# Settings for django-registration.
 # Close unactivated accounts after two weeks
 ACCOUNT_ACTIVATION_DAYS = 14
-REGISTRATION_EMAIL_REGISTER_SUCCESS_URL = '/accounts/register/complete/'
-
-AUTHENTICATION_BACKENDS = (
-    'registration_email.auth.EmailBackend',
-)
 LOGIN_REDIRECT_URL = '/'

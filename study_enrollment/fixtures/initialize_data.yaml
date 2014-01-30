@@ -1,5 +1,6 @@
 # Set up groups.
-# study_admin group can edit enrollment sets and set the active enrollment set.
+# study_admin group can change the active enrollment set and can 
+# add/change/delete requirement and module data.
 - fields:
     name: study_admin
     permissions:
@@ -13,14 +14,19 @@
       - ["add_requirementchoice", "study_enrollment", "requirementchoice"]
       - ["change_requirementchoice", "study_enrollment", "requirementchoice"]
       - ["delete_requirementchoice", "study_enrollment", "requirementchoice"]
+      - ["add_modulelist", "study_enrollment", "modulelist"]
+      - ["change_modulelist", "study_enrollment", "modulelist"]
+      - ["delete_modulelist", "study_enrollment", "modulelist"]
+      - ["add_enrollmentmodule", "study_enrollment", "enrollmentmodule"]
+      - ["change_enrollmentmodule", "study_enrollment", "enrollmentmodule"]
+      - ["delete_enrollmentmodule", "study_enrollment", "enrollmentmodule"]
+      - ["add_modulequestion", "study_enrollment", "modulequestion"]
+      - ["change_modulequestion", "study_enrollment", "modulequestion"]
+      - ["delete_modulequestion", "study_enrollment", "modulequestion"]
+      - ["add_modulequestionchoice", "study_enrollment", "modulequestionchoice"]
+      - ["change_modulequestionchoice", "study_enrollment", "modulequestionchoice"]
+      - ["delete_modulequestionchoice", "study_enrollment", "modulequestionchoice"]
   model: auth.group
-  pk: 1
-# user_admin group can add users and edit which groups they belong to. 
-- fields:
-    name: user_admin
-    permissions: [10, 11, 12]
-  model: auth.group
-  pk: 2
 
 # Study admin: An account used to set up an enrollment process.
 # No other accounts should be necessary to run a site with django-study-enrollment.

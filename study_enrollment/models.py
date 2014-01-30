@@ -35,7 +35,7 @@ class Requirement(models.Model):
 
     """
     # A question might get re-used in multiple versions of the requirement list
-    req_list = models.ManyToManyField(RequirementList)
+    req_list = models.ManyToManyField(RequirementList, blank=True)
     question = models.CharField(max_length=200)
     explanation = models.TextField(blank=True)
 
@@ -96,8 +96,9 @@ class EnrollmentModule(models.Model):
 
     """
     # A module might get re-used in multiple versions of the module list
+    module_list = models.ManyToManyField(ModuleList, blank=True)
     title = models.CharField(max_length=120)
-    content = TextField(blank=True)
+    content = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.title
@@ -121,10 +122,10 @@ class ModuleQuestion(models.Model):
     choices = modulequestion.modulequestionchoice_set.all()
 
     """
-    module_list = models.ManyToManyField(ModuleList)
+    enrollment_module = models.ManyToManyField(EnrollmentModule, blank=True)
     question = models.CharField(max_length=300)
-    question_type_choices = [('one': 'select one'),
-                             ('all': 'select all')]
+    question_type_choices = [('one', 'select one'),
+                             ('all', 'select all')]
     question_type = models.CharField(max_length=3,
                                      choices=question_type_choices,
                                      default='one')
@@ -149,7 +150,7 @@ class ModuleQuestionChoice(models.Model):
     is_correct = models.BooleanField()
 
     def __unicode__(self):
-        return str(self.answer) + ' (Correct: ' + str(self.is_eligible) + ')'
+        return str(self.answer) + ' (Correct: ' + str(self.is_correct) + ')'
 
 
 class ActiveEnrollmentSet(models.Model):
