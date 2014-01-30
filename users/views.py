@@ -45,7 +45,7 @@ class EnrollmentRegistrationView(ReqsMetMixin, RegistrationView):
     """
     def register(self, request, **cleaned_data):
         new_user = super(EnrollmentRegistrationView, self).register(request, **cleaned_data)
-        # Create a new UserEnrollment and add is_eligible = True
+        # Get or create a new UserEnrollment and add is_eligible = True
         user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
         user_enrollment.is_eligible = True
         user_enrollment.save()
