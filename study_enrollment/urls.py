@@ -9,4 +9,5 @@ urlpatterns = patterns('',
         name='requirements_passed'),
     url(r'^requirements$', views.RequirementsView.as_view(), name='requirements'),
     url(r'^start', views.StartView.as_view(), name='start'),
+    url(r'^module/(?P<module_id>\d+)$', views.ModuleView.as_view(), name='module'),
 )

@@ -86,9 +86,6 @@ class EnrollmentModule(models.Model):
     Fields:
     title:    (CharField, 120 char max) Title of this module
     content:  (TextField) Study material for this section.
-              Markdown markup can be used for this field if the site has
-              django.contrib.markup in INSTALLED_APPS and templates use
-              {% load markup %} and {{ content|markdown:"safe" }}
 
     Questions for the module are defined as ModuleQuestion objects.
     To access them from this object, you can ask for the set, e.g.

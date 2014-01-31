@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User, check_password
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.views.generic.base import View, ContextMixin, TemplateResponseMixin
 
-from study_enrollment.models import ActiveEnrollmentSet, Requirement, UserEnrollment
+from study_enrollment.models import ActiveEnrollmentSet, Requirement, UserEnrollment, EnrollmentModule
 from study_enrollment.settings import IS_ELIGIBLE_FLAG
 from study_enrollment.utils import need_to_check_eligibility, transfer_eligibility_info
 from study_enrollment.mixins import ReqsMetMixin, LoginRequiredMixin
@@ -62,7 +62,12 @@ class BaseEnrollmentView(View):
         if request.user.is_authenticated():
             self.user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
             transfer_eligibility_info(request)
-
+            # If logged in and modules used, get modules.
+            if self.enrollment_set.use_module_list:
+                self.modules = EnrollmentModule.objects.filter(
+                    module_list=self.enrollment_set.module_list)
+                if not self.modules:
+                    return render(request, 'study_enrollment/modules_need_set_up.html')
         # Remainder as in django.views.generic.base
         return super(BaseEnrollmentView, self).dispatch(request, *args, **kwargs)
 
@@ -137,4 +142,24 @@ class ReqsMetEnrollmentTemplateView(ReqsMetMixin, BaseEnrollmentView):
 class StartView(ReqsMetMixin, LoginRequiredMixin, BaseEnrollmentView):
     """Start enrollment modules."""
     def get(self, request, *args, **kwargs):
-        return HttpResponse("Page for starting enrollment exam.")
+        context = { 'modules': self.modules }
+        return render(request, 'study_enrollment/start_modules.html', context)
+
+
+class ModuleView(ReqsMetMixin, LoginRequiredMixin, BaseEnrollmentView):
+    """Display module and process responses."""
+    def get(self, request, module_id, *args, **kwargs):
+        try:
+            module = EnrollmentModule.objects.get(pk=module_id)
+        except EnrollmentModule.DoesNotExist:
+            raise Http404
+
+        module_questions = module.modulequestion_set.all()
+        module_question_choices = [question.modulequestionchoice_set.all() for
+                                   question in module_questions]
+        question_items = [ {'module_question': module_questions[x],
+                            'question_choices': module_question_choices[x]}
+                           for x in range(len(module_questions)) ]
+        context = { 'module': module,
+                    'question_items': question_items, }
+        return render(request, 'study_enrollment/module.html', context)
