@@ -16,7 +16,7 @@ def transfer_eligibility_info(request):
         if request.session.get(IS_ELIGIBLE_FLAG):
             user_enrollment.is_eligible = True
             user_enrollment.save()
-            del request.session[IS_ELIGIBLE_FLAG]
+            request.session.pop(IS_ELIGIBLE_FLAG)
 
 
 def need_to_check_eligibility(request):

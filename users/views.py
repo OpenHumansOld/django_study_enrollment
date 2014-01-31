@@ -8,6 +8,7 @@ from registration.backends.default.views import ActivationView
 
 from users.forms import RegistrationForm
 
+from study_enrollment.settings import IS_ELIGIBLE_FLAG
 from study_enrollment.mixins import ReqsMetMixin
 from study_enrollment.models import UserEnrollment
 
@@ -46,7 +47,7 @@ class EnrollmentRegistrationView(ReqsMetMixin, RegistrationView):
     def register(self, request, **cleaned_data):
         new_user = super(EnrollmentRegistrationView, self).register(request, **cleaned_data)
         # Get or create a new UserEnrollment and add is_eligible = True
-        user_enrollment, _ = UserEnrollment.objects.get_or_create(user=request.user)
+        user_enrollment, _ = UserEnrollment.objects.get_or_create(user=new_user)
         user_enrollment.is_eligible = True
         user_enrollment.save()
-        del request.session[IS_ELIGIBLE_FLAG]
+        request.session.pop(IS_ELIGIBLE_FLAG)

@@ -81,7 +81,7 @@ class IndexView(BaseEnrollmentView):
 
     """
     def get(self, request, *args, **kwargs):
-        context = {'need_to_check_eligiblity': need_to_check_eligibility(request),
+        context = {'need_to_check_eligibility': need_to_check_eligibility(request),
                    'not_logged_in': not request.user.is_authenticated(),
                    }
         return render(request, 'study_enrollment/index.html', context)
