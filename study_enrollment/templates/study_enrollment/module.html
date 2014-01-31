@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load study_enrollment_extras %}
+
+{% block main %}
+
+<h1>Module: {{ module.title }}</h1>
+
+<p>
+  {{ module.content|enrollment_markdown }}
+</p>
+
+<hr />
+
+{% for question_item in question_items %}
+<p>{{ question_item.module_question.question }}</p>
+<ul>
+{% for choice in question_item.question_choices %}
+<li>{{ choice.answer }}</li>
+{% endfor %}
+</ul>
+{% endfor %}
+
+{% endblock main %}

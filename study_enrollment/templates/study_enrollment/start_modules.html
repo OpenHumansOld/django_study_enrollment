@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<h1>Study Modules</h1>
+
+<p>
+  Welcome to this study's enrollment! To ensure participants make an informed decision when enrolling in this study, we would like you to complete these modules.
+</p>
+
+<hr>
+
+<ol>
+  {% for module in modules %}
+  <li><a href="/module/{{ module.pk }}">{{ module.title }}</a></li>
+  {% endfor %}
+</ol>
+
+{% endblock main %}

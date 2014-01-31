@@ -1,3 +1,4 @@
 django==1.6.1
 pyyaml==3.10
 django-registration==1.0
+markdown==2.3.1
