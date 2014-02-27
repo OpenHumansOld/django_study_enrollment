@@ -182,8 +182,22 @@ Once complete you can start your application.
     [yourusername@yourmachine django_study_enrollment]$ eb start
     
 
-After a few minutes your application is online and running and a URL is output.  
+After a few minutes your application is running and a URL is output.  
+
 Monitoring of progress can also be done at the AWS web interface [https://console.aws.amazon.com/elasticbeanstalk/](https://console.aws.amazon.com/elasticbeanstalk/)
+
+Status may also be monitored using the eb status command
+
+    eb status --verbose
+
+From here you can update your project and commit as usual with git.  To update the application you can push your git commits to your application directly from the command line.
+
+    git commit
+    git aws.push
+
+To stop your application, use the online dashboard or the eb tool to stop.
+
+    eb stop
 
 Configuration
 -------------
