@@ -11,8 +11,8 @@ setup(
     version='0.1',
     packages=find_packages(),
     include_package_data=True,
-    license='MIT License',  # example license
-    description='A Django app to for study enrollment.',
+    license='MIT License',
+    description='A Django app for study enrollment.',
     long_description=README,
     url='http://www.example.com/',
     author='Your Name',
