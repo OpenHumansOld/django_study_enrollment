@@ -1,4 +1,6 @@
-django==1.6.1
-pyyaml==3.10
+Django==1.6.2
+MySQL-python==1.2.5
 django-registration==1.0
+wsgiref==0.1.2
+pyyaml==3.10
 markdown==2.3.1
